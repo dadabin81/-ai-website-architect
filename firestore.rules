@@ -1,0 +1,48 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Default deny all reads and writes
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Only authenticated users who own the document can access their data.
+    // This rule covers sites, blogs, media, and domains.
+    match /sites/{siteId} {
+      allow read, update, delete: if request.auth.uid == resource.data.userId;
+      allow create: if request.auth.uid == request.resource.data.userId;
+    }
+    match /blogs/{blogId} {
+      allow read, update, delete: if request.auth.uid == resource.data.userId;
+      allow create: if request.auth.uid == request.resource.data.userId;
+    }
+    match /media/{mediaId} {
+      allow read, update, delete: if request.auth.uid == resource.data.userId;
+      allow create: if request.auth.uid == request.resource.data.userId;
+    }
+    match /domains/{domainId} {
+      allow read, update, delete: if request.auth.uid == resource.data.userId;
+      allow create: if request.auth.uid == request.resource.data.userId;
+    }
+    
+    // Rules for the public site mapping collection
+    match /publishedSites/{subdomain} {
+      // Anyone can read this collection to find out where a subdomain points.
+      allow read;
+      
+      // A user can create a publication document ONLY if they are the owner of the site being published.
+      // This prevents a user from publishing someone else's site.
+      allow create: if request.auth.uid != null &&
+                     get(/databases/$(database)/documents/sites/$(request.resource.data.siteId)).data.userId == request.auth.uid;
+      
+      // A user can delete a publication (unpublish) ONLY if they own the site.
+      allow delete: if request.auth.uid != null && 
+                     get(/databases/$(database)/documents/sites/$(resource.data.siteId)).data.userId == request.auth.uid;
+      
+      // To prevent issues like hijacking, direct updates are disallowed. Unpublish and republish is the safe workflow.
+      allow update: if false;
+    }
+  }
+}

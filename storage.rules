@@ -1,0 +1,25 @@
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Default deny all
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    // Users can only manage their own files in their designated folders.
+    // Path examples: `media/{userId}/{fileId}`, `sites/{userId}/{siteId}.html`
+    match /{folder}/{userId}/{fileName} {
+      allow read, write: if request.auth.uid == userId;
+    }
+
+    // Allow ANYONE to read the HTML file of a PUBLISHED site.
+    // This rule is essential for the public `view/[subdomain]` page to work.
+    match /sites/{userId}/{siteId}.html {
+      // Public read is allowed if the corresponding Firestore document for the site exists and its `isPublished` field is true.
+      allow read: if exists(/databases/$(database)/documents/sites/$(siteId)) &&
+                   get(/databases/$(database)/documents/sites/$(siteId)).data.isPublished == true;
+    }
+  }
+}
