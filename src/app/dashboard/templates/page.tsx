@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 
 const templates = [
   {
+    slug: 'modern-tech-startup',
     title: 'Modern Tech Startup',
     description: 'A sleek, professional design for innovative tech companies. Features bold typography and a dark-mode-first approach.',
     category: 'Business',
@@ -24,6 +25,7 @@ const templates = [
     imageHint: 'dark website'
   },
   {
+    slug: 'cozy-coffee-shop',
     title: 'Cozy Coffee Shop',
     description: 'A warm and inviting template perfect for cafes and local eateries. Rustic elements meet modern design.',
     category: 'Local Business',
@@ -31,6 +33,7 @@ const templates = [
     imageHint: 'cafe website'
   },
   {
+    slug: 'minimalist-portfolio',
     title: 'Minimalist Portfolio',
     description: 'A clean, content-focused layout for artists, designers, and photographers to showcase their work.',
     category: 'Portfolio',
@@ -38,6 +41,7 @@ const templates = [
     imageHint: 'portfolio website'
   },
   {
+    slug: 'vibrant-digital-agency',
     title: 'Vibrant Digital Agency',
     description: 'A colorful and energetic design to showcase the creativity of a digital marketing or design agency.',
     category: 'Business',
@@ -45,6 +49,7 @@ const templates = [
     imageHint: 'agency website'
   },
   {
+    slug: 'personal-finance-blog',
     title: 'Personal Finance Blog',
     description: 'A trustworthy and clear design for financial advisors and bloggers. Focuses on readability and data visualization.',
     category: 'Blog',
@@ -52,6 +57,7 @@ const templates = [
     imageHint: 'finance website'
   },
   {
+    slug: 'travel-influencer-blog',
     title: 'Travel Influencer Blog',
     description: 'An immersive, image-heavy design perfect for sharing travel stories and stunning photographs.',
     category: 'Blog',
@@ -99,7 +105,7 @@ export default function TemplatesPage() {
             </CardHeader>
             <CardFooter className="mt-auto justify-end gap-2">
               <Button asChild size="sm">
-                <Link href={`/dashboard/templates/${encodeURIComponent(template.title.toLowerCase().replace(/\s+/g, '-'))}`}>
+                <Link href={`/dashboard/templates/${template.slug}`}>
                    <Eye className="mr-2 h-4 w-4" /> Use Template
                 </Link>
               </Button>
@@ -110,3 +116,5 @@ export default function TemplatesPage() {
     </div>
   );
 }
+
+    

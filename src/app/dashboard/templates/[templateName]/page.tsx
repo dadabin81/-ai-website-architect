@@ -81,7 +81,8 @@ export default function TemplatePreviewPage() {
     }
     
     generateInitialTemplate();
-  }, [templateTitle, router, toast]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [templateTitle, router]);
 
   function handleTaskSelectionChange(taskId: string, isChecked: boolean) {
     setSelectedTasks(prev => 

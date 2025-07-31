@@ -4,6 +4,10 @@ import { firestore, storage } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { ref, getBlob } from "firebase/storage";
 
+// This tells Next.js to render this page on the server for each request.
+// This is the safest way to avoid build-time errors in App Hosting when dealing with Firebase.
+export const dynamic = 'force-dynamic';
+
 async function getPublishedSite(subdomain: string) {
     try {
         const publishedSiteRef = doc(firestore, 'publishedSites', subdomain);

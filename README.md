@@ -8,9 +8,9 @@ This project is configured to be deployed using Firebase App Hosting, which prov
 
 ### One-Time Setup
 
-1.  **Create a GitHub Repository:** Create a new, empty repository on GitHub. For this project, the correct repository is: `https://github.com/dadabin81/-ai-website-architect.git`.
+1.  **Create a GitHub Repository:** Create a new, empty repository on GitHub.
 
-2.  **Publish from Studio:** Inside Firebase Studio, use the "Source Control" view (the icon with branching lines) to **Publish to GitHub**. Connect your GitHub account and select the repository you just created. This will push your project code to the repository.
+2.  **Publish from Studio:** Inside Firebase Studio, use the "Source Control" view (the icon with branching lines) to **Publish to GitHub**. Connect your GitHub account and select the repository you created. This will push your project code to the repository.
 
 3.  **Configure App Hosting:**
     *   Go to the Firebase Console for your project.

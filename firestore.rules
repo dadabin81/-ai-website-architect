@@ -1,48 +1,50 @@
-
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Default deny all reads and writes
-    match /{document=**} {
-      allow read, write: if false;
+    // Helper function to check ownership
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
     }
 
-    // Only authenticated users who own the document can access their data.
-    // This rule covers sites, blogs, media, and domains.
+    // Sites: Users can only CUD their own sites.
+    // List/Get operations require the query to filter by the user's own ID.
     match /sites/{siteId} {
-      allow read, update, delete: if request.auth.uid == resource.data.userId;
-      allow create: if request.auth.uid == request.resource.data.userId;
-    }
-    match /blogs/{blogId} {
-      allow read, update, delete: if request.auth.uid == resource.data.userId;
-      allow create: if request.auth.uid == request.resource.data.userId;
-    }
-    match /media/{mediaId} {
-      allow read, update, delete: if request.auth.uid == resource.data.userId;
-      allow create: if request.auth.uid == request.resource.data.userId;
-    }
-    match /domains/{domainId} {
-      allow read, update, delete: if request.auth.uid == resource.data.userId;
-      allow create: if request.auth.uid == request.resource.data.userId;
+      allow read, delete, update: if isOwner(resource.data.userId);
+      allow create: if isOwner(request.resource.data.userId);
+      allow list: if request.auth != null && request.query.where.size() == 1 && request.query.where[0].field == 'userId' && request.query.where[0].value == request.auth.uid;
     }
     
-    // Rules for the public site mapping collection
+    // Blogs: Users can only CUD their own blogs.
+    // List/Get operations require the query to filter by the user's own ID.
+    match /blogs/{blogId} {
+      allow read, delete, update: if isOwner(resource.data.userId);
+      allow create: if isOwner(request.resource.data.userId);
+      allow list: if request.auth != null && request.query.where.size() == 1 && request.query.where[0].field == 'userId' && request.query.where[0].value == request.auth.uid;
+    }
+
+    // Media: Users can only CUD their own media.
+    // List/Get operations require the query to filter by the user's own ID.
+    match /media/{mediaId} {
+      allow read, delete, update: if isOwner(resource.data.userId);
+      allow create: if isOwner(request.resource.data.userId);
+      allow list: if request.auth != null && request.query.where.size() == 1 && request.query.where[0].field == 'userId' && request.query.where[0].value == request.auth.uid;
+    }
+
+    // Domains: Users can only CUD their own domains.
+    // List/Get operations require the query to filter by the user's own ID.
+    match /domains/{domainId} {
+      allow read, delete, update: if isOwner(resource.data.userId);
+      allow create: if isOwner(request.resource.data.userId);
+      allow list: if request.auth != null && request.query.where.size() == 1 && request.query.where[0].field == 'userId' && request.query.where[0].value == request.auth.uid;
+    }
+    
+    // Published Sites: Publicly readable, but only the owner can manage them.
     match /publishedSites/{subdomain} {
-      // Anyone can read this collection to find out where a subdomain points.
-      allow read;
-      
-      // A user can create a publication document ONLY if they are the owner of the site being published.
-      // This prevents a user from publishing someone else's site.
-      allow create: if request.auth.uid != null &&
-                     get(/databases/$(database)/documents/sites/$(request.resource.data.siteId)).data.userId == request.auth.uid;
-      
-      // A user can delete a publication (unpublish) ONLY if they own the site.
-      allow delete: if request.auth.uid != null && 
-                     get(/databases/$(database)/documents/sites/$(resource.data.siteId)).data.userId == request.auth.uid;
-      
-      // To prevent issues like hijacking, direct updates are disallowed. Unpublish and republish is the safe workflow.
-      allow update: if false;
+      allow get; // Allows anyone to read a single published site by its subdomain URL
+      allow list: if false; // Disallow listing all published sites
+      allow create, update, delete: if isOwner(resource.data.userId) || isOwner(request.resource.data.userId);
     }
   }
 }

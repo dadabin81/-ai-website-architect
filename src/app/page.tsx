@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -33,6 +34,7 @@ export default function Home() {
     {
       src: 'https://i.postimg.cc/N0DYt4tq/image.png',
       alt: 'AI creating a vibrant website interface',
+      hint: 'AI website creation'
     },
     {
       src: 'https://i.postimg.cc/tJK7657v/image-6.png',
@@ -165,7 +167,8 @@ export default function Home() {
                                     height={400}
                                     alt={image.alt}
                                     className="w-full h-full object-cover"
-                                    {...(image.hint && { 'data-ai-hint': image.hint })}
+                                    priority={index === 0}
+                                    data-ai-hint={image.hint}
                                 />
                             </CarouselItem>
                         ))}

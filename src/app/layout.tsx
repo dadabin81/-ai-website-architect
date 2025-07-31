@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -7,6 +8,7 @@ import { AuthProvider } from '@/hooks/use-auth';
 export const metadata: Metadata = {
   title: 'AI Website Architect',
   description: 'Create custom, SEO-ready websites and blogs with AI Website Architect. Describe your vision to get a unique design and content in minutes. No code required.',
+  icons: null,
 };
 
 export default function RootLayout({
